@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"hotel-booking/internal/routes"
 )
 
 func main() {
@@ -19,9 +20,11 @@ func main() {
 		port = "8080"
 	}
 
+	r := routes.SetupRoutes()
+
 	fmt.Printf("Server starting on port %s\n", port)
 
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
 }
