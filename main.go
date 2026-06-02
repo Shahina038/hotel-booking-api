@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/joho/godotenv"
+	"hotel-booking/internal/config"
+	"hotel-booking/internal/db"
 	"hotel-booking/internal/routes"
 )
 
@@ -15,16 +16,16 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	cfg := config.Load()
+
+	database := db.Connect(cfg)
+	defer database.Close()
 
 	r := routes.SetupRoutes()
 
-	fmt.Printf("Server starting on port %s\n", port)
+	fmt.Printf("Server starting on port %s\n", cfg.Port)
 
-	if err := http.ListenAndServe(":"+port, r); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {
 		log.Fatal(err)
 	}
 }
